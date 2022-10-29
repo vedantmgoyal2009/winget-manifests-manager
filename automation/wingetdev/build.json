@@ -1,0 +1,8 @@
+{
+  "Commit": {
+    "Sha": "050056a6ceb46dcd62127da112255dceed8114f1",
+    "Message": "Export command for winget settings. (#2719)",
+    "Author": "Ruben Guerrero"
+  },
+  "BuildDateTime": "Tuesday, December 13, 2022 7:22:04 AM"
+}

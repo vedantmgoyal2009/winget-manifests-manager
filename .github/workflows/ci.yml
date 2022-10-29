@@ -1,0 +1,50 @@
+name: CI
+run-name: ${{ inputs.what-to-run || 'WinGet Automation' }}
+on:
+  # schedule:
+  #   - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      what-to-run:
+        description: What to run?
+        type: choice
+        options:
+          - WinGet Automation
+          - Add package versions (Json input)
+          - Add Arp entries (Json input)
+          - Move packages (Json input)
+        default: 'WinGet Automation'
+        required: true
+      json-input:
+        description: Json input
+        type: string
+        default: '[ ]'
+        required: true
+jobs:
+  wpa-automation:
+    name: WinGet Automation
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Run automation script
+        run: |
+          If ('Add package versions (Json input)' -eq '${{ inputs.what-to-run }}') {
+            .\Add-PackageVersions.ps1 -JsonInput '${{ inputs.json-input }}'
+          } ElseIf ('Add Arp entries (Json input)' -eq '${{ inputs.what-to-run }}') {
+            .\Add-ArpEntries.ps1 -JsonInput '${{ inputs.json-input }}'
+          } ElseIf ('Move packages (Json input)' -eq '${{ inputs.what-to-run }}') {
+            .\Move-Packages.ps1 -JsonInput '${{ inputs.json-input }}'
+          } Else {
+            Write-Output "Running WinGet Automation"
+            # TODO: Run Automation (golang)
+          }
+        env:
+          BOT_APP_ID: ${{ secrets.BOT_APP_ID }}
+          BOT_PRIVATE_KEY: ${{ secrets.BOT_PVT_KEY }}
+          BOT_INSTALLATION_ID: ${{ secrets.BOT_INST_ID }}
+          GITHUB_TOKEN: ${{ secrets.MYSUPERSECRETINFORMATION }}
+        shell: pwsh
+        working-directory: automation
